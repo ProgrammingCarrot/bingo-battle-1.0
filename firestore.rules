@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 檢查是否有經過 Firebase Auth 驗證（包含匿名登入與 Google 登入）
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // 房間：允許玩家讀取、建立、更新遊戲狀態，但禁止刪除房間
+    match /rooms/{roomId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if false;
+    }
+
+    // 戰績：僅允許玩家本人讀取與新增自己的歷史戰績，禁止覆寫或刪除
+    match /users/{userId}/history/{gameId} {
+      allow read, create: if isAuthenticated() && request.auth.uid == userId;
+      allow update, delete: if false;
+    }
+
+    // 預設拒絕其餘未定義路徑
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

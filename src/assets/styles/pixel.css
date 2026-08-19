@@ -1,0 +1,297 @@
+/* ==========================================================================
+   Street Bingo 8-Bit Pixel Design System
+   ========================================================================== */
+
+:root {
+  /* 8-bit NES & Arcade Color Palette */
+  --pixel-bg-dark: #0f111a;
+  --pixel-bg-card: #1b1d2a;
+  --pixel-bg-card-alt: #26293d;
+  --pixel-border: #3a3f58;
+  --pixel-border-light: #525a7a;
+  
+  /* Primary & Accent Colors */
+  --pixel-gold: #f9c74f;
+  --pixel-gold-dark: #d4a329;
+  --pixel-red: #f94144;
+  --pixel-red-dark: #c82333;
+  --pixel-green: #43aa8b;
+  --pixel-green-light: #90be6d;
+  --pixel-blue: #4cc9f0;
+  --pixel-blue-dark: #4361ee;
+  --pixel-orange: #f8961e;
+  --pixel-purple: #7209b7;
+  
+  /* Text */
+  --pixel-text: #f0f3f8;
+  --pixel-text-dim: #9aa5b8;
+  --pixel-text-shadow: #000000;
+
+  /* Fonts */
+  --font-pixel-en: 'Press Start 2P', monospace;
+  --font-pixel-zh: 'DotGothic16', 'Noto Sans TC', monospace;
+  --font-sans: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  background-color: var(--pixel-bg-dark);
+  color: var(--pixel-text);
+  font-family: var(--font-pixel-zh);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 50% 20%, rgba(67, 97, 238, 0.15) 0%, transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px, 24px 24px;
+}
+
+/* 8-bit Pixel Borders (NES Box-Shadow Method) */
+.pixel-box {
+  background: var(--pixel-bg-card);
+  border: 4px solid #000;
+  box-shadow: 
+    inset -4px -4px 0px 0px rgba(0, 0, 0, 0.4),
+    inset 4px 4px 0px 0px rgba(255, 255, 255, 0.15),
+    4px 4px 0px 0px #000;
+  position: relative;
+}
+
+.pixel-box-gold {
+  background: var(--pixel-bg-card);
+  border: 4px solid var(--pixel-gold-dark);
+  box-shadow: 
+    inset -4px -4px 0px 0px #8b6b15,
+    inset 4px 4px 0px 0px #fff275,
+    4px 4px 0px 0px #000;
+}
+
+.pixel-box-blue {
+  background: var(--pixel-bg-card);
+  border: 4px solid var(--pixel-blue-dark);
+  box-shadow: 
+    inset -4px -4px 0px 0px #1e2d7d,
+    inset 4px 4px 0px 0px #a2d2ff,
+    4px 4px 0px 0px #000;
+}
+
+/* 8-bit Pixel Buttons */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-pixel-zh);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 16px;
+  color: #fff;
+  background-color: var(--pixel-blue-dark);
+  border: 3px solid #000;
+  box-shadow: 
+    inset -3px -3px 0px 0px rgba(0, 0, 0, 0.5),
+    inset 3px 3px 0px 0px rgba(255, 255, 255, 0.3),
+    3px 3px 0px 0px #000;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.05s ease, filter 0.1s ease;
+  position: relative;
+}
+
+.pixel-btn:hover {
+  filter: brightness(1.1);
+}
+
+.pixel-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 
+    inset -2px -2px 0px 0px rgba(0, 0, 0, 0.5),
+    inset 2px 2px 0px 0px rgba(255, 255, 255, 0.3),
+    1px 1px 0px 0px #000;
+}
+
+.pixel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+  transform: none;
+}
+
+.pixel-btn-gold {
+  background-color: var(--pixel-gold);
+  color: #111;
+  box-shadow: 
+    inset -3px -3px 0px 0px #b8860b,
+    inset 3px 3px 0px 0px #fff7c2,
+    3px 3px 0px 0px #000;
+}
+
+.pixel-btn-red {
+  background-color: var(--pixel-red);
+  color: #fff;
+  box-shadow: 
+    inset -3px -3px 0px 0px #9b1d20,
+    inset 3px 3px 0px 0px #ffa8a9,
+    3px 3px 0px 0px #000;
+}
+
+.pixel-btn-green {
+  background-color: var(--pixel-green);
+  color: #fff;
+  box-shadow: 
+    inset -3px -3px 0px 0px #245e4d,
+    inset 3px 3px 0px 0px #9be2cd,
+    3px 3px 0px 0px #000;
+}
+
+.pixel-btn-secondary {
+  background-color: #3b4259;
+  color: #e2e8f0;
+  box-shadow: 
+    inset -3px -3px 0px 0px #1d212d,
+    inset 3px 3px 0px 0px #636d8f,
+    3px 3px 0px 0px #000;
+}
+
+/* 8-bit Pixel Inputs */
+.pixel-input {
+  font-family: var(--font-pixel-zh);
+  font-size: 15px;
+  background: #11131c;
+  color: var(--pixel-text);
+  border: 3px solid #000;
+  box-shadow: 
+    inset 3px 3px 0px 0px rgba(0, 0, 0, 0.8),
+    inset -2px -2px 0px 0px rgba(255, 255, 255, 0.1),
+    2px 2px 0px 0px #000;
+  padding: 10px 14px;
+  outline: none;
+  width: 100%;
+}
+
+.pixel-input:focus {
+  border-color: var(--pixel-gold);
+}
+
+/* 8-bit Badges & Labels */
+.pixel-tag {
+  display: inline-block;
+  font-family: var(--font-pixel-zh);
+  font-size: 11px;
+  padding: 2px 8px;
+  border: 2px solid #000;
+  background: var(--pixel-gold);
+  color: #111;
+  font-weight: bold;
+}
+
+.pixel-tag-blue {
+  background: var(--pixel-blue);
+  color: #000;
+}
+
+.pixel-tag-green {
+  background: var(--pixel-green-light);
+  color: #000;
+}
+
+.pixel-tag-purple {
+  background: var(--pixel-purple);
+  color: #fff;
+}
+
+/* Progress bar retro style */
+.pixel-progress-bar {
+  background: #0d0f16;
+  border: 3px solid #000;
+  height: 18px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 2px 2px 0 #000;
+}
+
+.pixel-progress-fill {
+  height: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--pixel-green),
+    var(--pixel-green) 6px,
+    var(--pixel-green-light) 6px,
+    var(--pixel-green-light) 12px
+  );
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animations */
+@keyframes pixel-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pixel-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes pixel-shine {
+  0% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.03); filter: brightness(1.3); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.anim-bounce {
+  animation: pixel-bounce 1.5s infinite steps(2);
+}
+
+.anim-pulse {
+  animation: pixel-pulse 1s infinite steps(2);
+}
+
+.anim-shine {
+  animation: pixel-shine 0.8s infinite;
+}
+
+/* Modal Overlay */
+.pixel-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 12, 18, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  backdrop-filter: blur(2px);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f111a;
+  border: 1px solid #26293d;
+}
+::-webkit-scrollbar-thumb {
+  background: #3b4259;
+  border: 1px solid #000;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pixel-gold);
+}

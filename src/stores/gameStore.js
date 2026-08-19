@@ -10,6 +10,7 @@ import {
   onSnapshot 
 } from 'firebase/firestore'
 import { useBingoLogic } from '@/composables/useBingoLogic'
+import { getRandomStreetItems } from '@/composables/useStreetItems'
 import { useAuthStore } from './authStore'
 
 export const useGameStore = defineStore('game', () => {
@@ -249,18 +250,104 @@ export const useGameStore = defineStore('game', () => {
             name: '像素小智',
             avatar: 'calico_cat',
             ready: true,
-            draftItems: [...items].reverse(),
+            draftItems: getRandomStreetItems(gridSize.value * gridSize.value),
             marks: [],
             lineCount: 0,
             markedCount: 0
           }
         } else {
           player2.value.ready = true
-          player2.value.draftItems = [...items].reverse()
+          player2.value.draftItems = player2.value.draftItems?.length === gridSize.value * gridSize.value 
+            ? player2.value.draftItems 
+            : getRandomStreetItems(gridSize.value * gridSize.value)
         }
         
         startLocalPlaying()
       }
+    }
+  }
+
+  // 測試專用：模擬對手加入房間
+  const simulateOpponentJoin = async () => {
+    const mockP2 = {
+      uid: 'mock_p2_' + Math.random().toString(36).substring(2, 6),
+      name: '像素小智 (AI)',
+      avatar: 'calico_cat',
+      ready: false,
+      draftItems: [],
+      marks: [],
+      lineCount: 0,
+      markedCount: 0
+    }
+    
+    player2.value = mockP2
+    sizeChooserId.value = player1.value?.uid || authStore.user?.uid || 'host_user'
+    roomStatus.value = 'CHOOSING_SIZE'
+
+    if (!isLocalMode.value && roomId.value && db) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId.value)
+        await updateDoc(roomRef, {
+          player2: mockP2,
+          status: 'CHOOSING_SIZE',
+          sizeChooserId: sizeChooserId.value
+        })
+      } catch (err) {
+        console.warn('simulateOpponentJoin firestore update warning:', err)
+      }
+    }
+  }
+
+  // 測試專用：模擬對手填寫完畢並立即開戰
+  const simulateOpponentReadyAndPlay = async () => {
+    const total = gridSize.value * gridSize.value
+    const p2Items = getRandomStreetItems(total)
+    
+    // 若自己尚未填好，也自動填滿
+    if (!myDraftItems.value || myDraftItems.value.length !== total) {
+      myDraftItems.value = getRandomStreetItems(total)
+    }
+
+    if (!player2.value) {
+      player2.value = {
+        uid: 'mock_ai_p2',
+        name: '像素小智 (AI)',
+        avatar: 'calico_cat',
+        ready: true,
+        draftItems: p2Items,
+        marks: [],
+        lineCount: 0,
+        markedCount: 0
+      }
+    } else {
+      player2.value.ready = true
+      player2.value.draftItems = p2Items
+    }
+
+    if (player1.value) {
+      player1.value.ready = true
+      if (!player1.value.draftItems || player1.value.draftItems.length !== total) {
+        player1.value.draftItems = myDraftItems.value
+      }
+    }
+
+    if (!isLocalMode.value && roomId.value && db) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId.value)
+        await updateDoc(roomRef, {
+          'player1.draftItems': myDraftItems.value,
+          'player1.ready': true,
+          'player2': player2.value,
+          status: 'PLAYING',
+          gameStartTime: Date.now()
+        })
+      } catch (err) {
+        console.warn('simulateOpponentReadyAndPlay firestore warning:', err)
+        // 降級為本地模擬直接開始
+        startLocalPlaying()
+      }
+    } else {
+      startLocalPlaying()
     }
   }
 
@@ -269,10 +356,13 @@ export const useGameStore = defineStore('game', () => {
     roomStatus.value = 'PLAYING'
     gameStartTime.value = Date.now()
     
-    // 交換卡片：P1 拿到 P2 填的題目，P2 拿到 P1 填的題目
-    const opponentItems = player2.value?.draftItems || myDraftItems.value
+    const total = gridSize.value * gridSize.value
+    // 交換卡片：P1 拿到 P2 填的題目
+    const opponentItems = (player2.value?.draftItems && player2.value.draftItems.length === total)
+      ? player2.value.draftItems 
+      : getRandomStreetItems(total)
+      
     myBoard.value = createBoard(gridSize.value, opponentItems)
-
     startTimer()
   }
 
@@ -489,6 +579,8 @@ export const useGameStore = defineStore('game', () => {
     submitDraftCard,
     toggleMarkCell,
     startLocalPlaying,
+    simulateOpponentJoin,
+    simulateOpponentReadyAndPlay,
     resetRoom,
     leaveRoom,
     deleteCurrentRoom,

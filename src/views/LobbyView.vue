@@ -38,6 +38,20 @@ function handleSelectSize(size) {
   router.push(`/fill/${roomId.value}`)
 }
 
+const isTestMode = computed(() => {
+  return gameStore.isLocalMode || 
+         route.path.includes('/test') || 
+         window.location.hash.includes('/test') || 
+         route.query.test === 'true' || 
+         route.meta?.isTestMode
+})
+
+async function handleSimulateOpponentJoin() {
+  playClick()
+  playBeep()
+  await gameStore.simulateOpponentJoin()
+}
+
 async function handleLeaveRoom() {
   playClick()
   await gameStore.leaveRoom()
@@ -99,6 +113,13 @@ async function handleLeaveRoom() {
       <div v-if="!gameStore.player2" class="waiting-box">
         <h3 class="box-title anim-pulse">⏳ 正在等待第二位玩家進入房間...</h3>
         <p class="box-desc">請將房號 <strong>{{ roomId }}</strong> 分享給好友，雙方進入後將由系統隨機指派一人決定賓果格數！</p>
+        
+        <!-- Test Mode Helper -->
+        <div v-if="isTestMode" class="test-lobby-helper">
+          <button class="pixel-btn pixel-btn-secondary test-join-btn" @click="handleSimulateOpponentJoin">
+            🧪 測試模式：模擬對手 (AI) 立即加入房間
+          </button>
+        </div>
       </div>
 
       <!-- Turn to choose size -->
@@ -287,6 +308,16 @@ async function handleLeaveRoom() {
 .box-desc {
   font-size: 13px;
   color: var(--pixel-text-dim);
+}
+
+.test-lobby-helper {
+  margin-top: 14px;
+}
+
+.test-join-btn {
+  font-size: 12px;
+  color: #e0aaff;
+  border-color: #7b2cbf;
 }
 
 .choose-header {

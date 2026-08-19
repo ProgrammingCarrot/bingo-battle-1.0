@@ -92,13 +92,35 @@ function handleClearAll() {
   customInputText.value = ''
 }
 
+const isTestMode = computed(() => {
+  return gameStore.isLocalMode || 
+         route.path.includes('/test') || 
+         window.location.hash.includes('/test') || 
+         route.query.test === 'true' || 
+         route.meta?.isTestMode
+})
+
+async function handleSimulateOpponentReady() {
+  playClick()
+  playBeep()
+  await gameStore.simulateOpponentReadyAndPlay()
+  router.push(`/game/${roomId.value}`)
+}
+
 async function handleConfirmReady() {
   if (!isAllFilled.value) return
   playClick()
   playBeep()
   isReady.value = true
   await gameStore.submitDraftCard(draftItems.value)
-  if (gameStore.isLocalMode) {
+  
+  // 若為測試模式或本機模式，自動幫對手就緒並進入遊戲
+  if (isTestMode.value || gameStore.isLocalMode) {
+    if (gameStore.roomStatus !== 'PLAYING') {
+      await gameStore.simulateOpponentReadyAndPlay()
+    }
+    router.push(`/game/${roomId.value}`)
+  } else if (gameStore.roomStatus === 'PLAYING') {
     router.push(`/game/${roomId.value}`)
   }
 }
@@ -211,6 +233,16 @@ async function handleConfirmReady() {
 
     <!-- Bottom Submit Bar -->
     <div class="bottom-action-bar">
+      <!-- Test Mode Quick Helper -->
+      <div v-if="isTestMode" class="test-fill-bar">
+        <button 
+          class="pixel-btn pixel-btn-secondary test-skip-btn" 
+          @click="handleSimulateOpponentReady"
+        >
+          🧪 測試模式：模擬對手填卡完成並立即開戰
+        </button>
+      </div>
+
       <button 
         class="pixel-btn pixel-btn-gold ready-submit-btn" 
         :disabled="!isAllFilled || isReady"
@@ -450,6 +482,17 @@ async function handleConfirmReady() {
 
 .bottom-action-bar {
   text-align: center;
+}
+
+.test-fill-bar {
+  margin-bottom: 10px;
+}
+
+.test-skip-btn {
+  font-size: 12px;
+  width: 100%;
+  color: #e0aaff;
+  border-color: #7b2cbf;
 }
 
 .ready-submit-btn {

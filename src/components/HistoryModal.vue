@@ -13,7 +13,7 @@ const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const list = await fetchGameRecords(authStore.user?.uid)
+    const list = await fetchGameRecords(authStore.user?.uid, authStore.isGoogle)
     records.value = list
   } catch (e) {
     console.error(e)

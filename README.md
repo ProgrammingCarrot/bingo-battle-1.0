@@ -164,23 +164,37 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // 房間：允許玩家讀寫；允許房間參與者 (房主/玩家) 刪除已結束或離開的房間
     match /rooms/{roomId} {
       allow read: if isAuthenticated();
       allow create, update: if isAuthenticated();
-      allow delete: if false;
+      allow delete: if isAuthenticated() && (
+        resource.data.player1.uid == request.auth.uid ||
+        (resource.data.player2 != null && resource.data.player2.uid == request.auth.uid)
+      );
     }
 
+    // 戰績：僅允許玩家本人讀取與新增自己的歷史戰績，禁止覆寫或刪除
     match /users/{userId}/history/{gameId} {
       allow read, create: if isAuthenticated() && request.auth.uid == userId;
       allow update, delete: if false;
     }
 
+    // 預設拒絕其餘未定義路徑
     match /{document=**} {
       allow read, write: if false;
     }
   }
 }
 ```
+
+### 3. 設定房間 TTL 自動清理 (12 小時過期)
+為了防止未正常退出的殭屍房間佔用資料庫容量，可在 Firebase Console 啟用 TTL（免費背景自動刪除）：
+1. 前往 **Firestore Database** → **TTL (Time-to-live)** 標籤頁（或 **Indexes / 索引** → **TTL**）。
+2. 點擊 **「Create Policy (建立政策)」**。
+3. 集合群組（Collection group）填入：`rooms`。
+4. 時間戳記欄位（Timestamp field）填入：`expireAt`。
+5. 點擊建立。Firestore 將會在房間建立 12 小時後自動清理過期文件。
 
 ---
 

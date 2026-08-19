@@ -38,9 +38,9 @@ function handleSelectSize(size) {
   router.push(`/fill/${roomId.value}`)
 }
 
-function handleLeaveRoom() {
+async function handleLeaveRoom() {
   playClick()
-  gameStore.resetRoom()
+  await gameStore.leaveRoom()
   router.push('/')
 }
 </script>

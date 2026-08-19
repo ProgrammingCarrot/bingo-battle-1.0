@@ -13,6 +13,7 @@ import {
   setDoc, 
   getDoc, 
   updateDoc, 
+  deleteDoc,
   onSnapshot, 
   collection, 
   addDoc, 
@@ -54,7 +55,7 @@ if (isFirebaseConfigured) {
   }
 }
 
-export { auth, db, googleProvider }
+export { auth, db, googleProvider, deleteDoc }
 
 /**
  * Google 帳號登入
@@ -99,8 +100,9 @@ export async function logoutUser() {
  * 儲存遊戲歷史戰績
  * @param {string} userId
  * @param {object} record
+ * @param {boolean} isGoogleUser - 是否為 Google 帳號登入玩家 (只有 Google 帳號會寫入 Firestore)
  */
-export async function saveGameRecord(userId, record) {
+export async function saveGameRecord(userId, record, isGoogleUser = false) {
   const localHistoryKey = `street_bingo_history_${userId || 'guest'}`
   try {
     const local = JSON.parse(localStorage.getItem(localHistoryKey) || '[]')
@@ -110,7 +112,8 @@ export async function saveGameRecord(userId, record) {
     console.error('Save local history error', e)
   }
 
-  if (isFirebaseConfigured && db && userId && !userId.startsWith('guest_')) {
+  // 僅針對 Google 登入的使用者將戰績同步至 Firestore，避免匿名者產生孤兒資料
+  if (isFirebaseConfigured && db && userId && isGoogleUser && !userId.startsWith('guest_')) {
     try {
       const historyCol = collection(db, 'users', userId, 'history')
       await addDoc(historyCol, {
@@ -126,12 +129,14 @@ export async function saveGameRecord(userId, record) {
 /**
  * 讀取遊戲歷史戰績
  * @param {string} userId
+ * @param {boolean} isGoogleUser - 是否為 Google 帳號登入玩家
  */
-export async function fetchGameRecords(userId) {
+export async function fetchGameRecords(userId, isGoogleUser = false) {
   const localHistoryKey = `street_bingo_history_${userId || 'guest'}`
   const localList = JSON.parse(localStorage.getItem(localHistoryKey) || '[]')
 
-  if (isFirebaseConfigured && db && userId && !userId.startsWith('guest_')) {
+  // 若為 Google 登入，嘗試從 Firestore 撈取雲端戰績；若非 Google 登入則直接回傳 localList 節省讀取
+  if (isFirebaseConfigured && db && userId && isGoogleUser && !userId.startsWith('guest_')) {
     try {
       const historyCol = collection(db, 'users', userId, 'history')
       const q = query(historyCol, orderBy('createdAt', 'desc'))
@@ -148,3 +153,4 @@ export async function fetchGameRecords(userId) {
 
   return localList
 }
+

@@ -6,6 +6,7 @@ import {
   setDoc, 
   getDoc, 
   updateDoc, 
+  deleteDoc,
   onSnapshot 
 } from 'firebase/firestore'
 import { useBingoLogic } from '@/composables/useBingoLogic'
@@ -103,10 +104,13 @@ export const useGameStore = defineStore('game', () => {
     if (!isLocalMode.value) {
       try {
         const roomRef = doc(db, 'rooms', code)
+        const expireMs = Date.now() + 12 * 60 * 60 * 1000 // 12 小時後過期
         await setDoc(roomRef, {
           roomId: code,
           status: 'WAITING',
           createdAt: Date.now(),
+          expireAt: new Date(expireMs), // Firestore TTL 索引欄位
+          expireAtMs: expireMs,
           player1: p1Data,
           player2: null,
           gridSize: 5,
@@ -155,6 +159,12 @@ export const useGameStore = defineStore('game', () => {
           throw new Error('找不到該房間，請確認 6 碼房號是否正確！')
         }
         const data = snap.data()
+        
+        // 檢查房間是否已過期 (TTL 12 小時)
+        if (data.expireAtMs && Date.now() > data.expireAtMs) {
+          throw new Error('該房間已逾時過期 (超過 12 小時)，無法加入！')
+        }
+
         if (data.player2 && data.player2.uid !== p2Data.uid) {
           throw new Error('該房間人數已滿，無法加入！')
         }
@@ -408,10 +418,31 @@ export const useGameStore = defineStore('game', () => {
       opponentName: (myPlayerRole.value === 'player1' ? player2.value?.name : player1.value?.name) || '對手'
     }
 
-    await saveGameRecord(myUid, record)
+    // 傳入 authStore.isGoogle，只有 Google 登入者才寫入 Firestore
+    await saveGameRecord(myUid, record, authStore.isGoogle)
   }
 
-  // 重設/退出房間
+  // 刪除 Firestore 當前房間 (主動清理)
+  const deleteCurrentRoom = async () => {
+    if (!isLocalMode.value && roomId.value && db) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId.value)
+        await deleteDoc(roomRef)
+      } catch (err) {
+        console.warn('Delete room warning or skipped:', err)
+      }
+    }
+  }
+
+  // 主動離開房間（若為房主或指定清理則刪除 Firestore 房間文件）
+  const leaveRoom = async (shouldDelete = false) => {
+    if (shouldDelete || isHost.value) {
+      await deleteCurrentRoom()
+    }
+    resetRoom()
+  }
+
+  // 重設/退出房間狀態
   const resetRoom = () => {
     if (unsubscribeRoom) {
       unsubscribeRoom()
@@ -459,6 +490,9 @@ export const useGameStore = defineStore('game', () => {
     toggleMarkCell,
     startLocalPlaying,
     resetRoom,
+    leaveRoom,
+    deleteCurrentRoom,
     finishGame
   }
 })
+

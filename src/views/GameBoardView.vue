@@ -89,13 +89,13 @@ function handleSimulateOpponentAction() {
   }
 }
 
-function handlePlayAgain() {
-  gameStore.resetRoom()
+async function handlePlayAgain() {
+  await gameStore.leaveRoom(true)
   router.push('/')
 }
 
-function handleBackHome() {
-  gameStore.resetRoom()
+async function handleBackHome() {
+  await gameStore.leaveRoom(true)
   router.push('/')
 }
 </script>

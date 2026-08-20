@@ -15,10 +15,21 @@ const { playClick, playBeep } = useSound()
 const roomId = computed(() => route.params.roomId || gameStore.roomId)
 const copySuccess = ref(false)
 
+const isTestMode = computed(() => {
+  return gameStore.isTestMode ||
+         gameStore.isLocalMode || 
+         route.path.includes('/test') || 
+         window.location.hash.includes('/test') || 
+         window.location.hash.includes('test=') ||
+         route.query?.test === 'true' || 
+         route.query?.test === '1' ||
+         route.meta?.isTestMode
+})
+
 // 監聽房間狀態變更，若進入 FILLING 則前往填寫頁面
 watch(() => gameStore.roomStatus, (newStatus) => {
   if (newStatus === 'FILLING' || newStatus === 'PLAYING') {
-    router.push(`/fill/${roomId.value}`)
+    router.push({ path: `/fill/${roomId.value}`, query: route.query })
   }
 })
 
@@ -35,16 +46,8 @@ function handleSelectSize(size) {
   playClick()
   playBeep()
   gameStore.selectGridSize(size)
-  router.push(`/fill/${roomId.value}`)
+  router.push({ path: `/fill/${roomId.value}`, query: route.query })
 }
-
-const isTestMode = computed(() => {
-  return gameStore.isLocalMode || 
-         route.path.includes('/test') || 
-         window.location.hash.includes('/test') || 
-         route.query.test === 'true' || 
-         route.meta?.isTestMode
-})
 
 async function handleSimulateOpponentJoin() {
   playClick()

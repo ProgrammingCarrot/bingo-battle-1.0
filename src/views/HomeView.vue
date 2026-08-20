@@ -15,11 +15,14 @@ const gameStore = useGameStore()
 const { playClick, playBeep, soundEnabled, toggleSound } = useSound()
 
 const isTestMode = computed(() => {
-  return route.path === '/test' || 
+  return gameStore.isTestMode ||
+         route.path === '/test' || 
          route.path.endsWith('/test') || 
          route.meta?.isTestMode || 
          route.query?.test === 'true' || 
-         window.location.hash.includes('/test')
+         route.query?.test === '1' ||
+         window.location.hash.includes('/test') ||
+         window.location.hash.includes('test=')
 })
 
 const inputRoomCode = ref('')
@@ -48,7 +51,12 @@ async function handleCreateRoom() {
   isActionLoading.value = true
   try {
     const code = await gameStore.createRoom()
-    router.push(`/lobby/${code}`)
+    if (isTestMode.value) {
+      gameStore.isTestMode = true
+      router.push({ path: `/lobby/${code}`, query: { test: '1' } })
+    } else {
+      router.push(`/lobby/${code}`)
+    }
   } catch (err) {
     errorMessage.value = err.message || '建立房間失敗'
   } finally {
@@ -67,7 +75,12 @@ async function handleJoinRoom() {
   try {
     const code = inputRoomCode.value.trim().toUpperCase()
     await gameStore.joinRoom(code)
-    router.push(`/lobby/${code}`)
+    if (isTestMode.value) {
+      gameStore.isTestMode = true
+      router.push({ path: `/lobby/${code}`, query: { test: '1' } })
+    } else {
+      router.push(`/lobby/${code}`)
+    }
   } catch (err) {
     errorMessage.value = err.message || '加入房間失敗'
   } finally {
@@ -75,14 +88,11 @@ async function handleJoinRoom() {
   }
 }
 
-// 快速本機雙人試玩
+// 快速本機單人模擬試玩 (AI 對戰)
 async function handleQuickSoloTest() {
   playClick()
-  gameStore.resetRoom()
-  gameStore.isLocalMode = true
-  const code = await gameStore.createRoom()
-  await gameStore.joinRoom(code)
-  router.push(`/lobby/${code}`)
+  const code = await gameStore.startQuickSoloTest()
+  router.push({ path: `/lobby/${code}`, query: { test: '1' } })
 }
 </script>
 

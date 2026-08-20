@@ -18,12 +18,14 @@ const size = computed(() => gameStore.gridSize || 5)
 const totalCells = computed(() => size.value * size.value)
 
 const isTestMode = computed(() => {
-  return gameStore.isLocalMode && (
-    route.path.includes('/test') || 
-    window.location.hash.includes('/test') || 
-    route.query.test === 'true' || 
-    route.meta?.isTestMode
-  )
+  return gameStore.isTestMode ||
+         gameStore.isLocalMode ||
+         route.path.includes('/test') || 
+         window.location.hash.includes('/test') || 
+         window.location.hash.includes('test=') ||
+         route.query?.test === 'true' || 
+         route.query?.test === '1' ||
+         route.meta?.isTestMode
 })
 
 // 監聽連線數變化，若達成新連線播放連線音效
@@ -91,12 +93,20 @@ function handleSimulateOpponentAction() {
 
 async function handlePlayAgain() {
   await gameStore.leaveRoom(true)
-  router.push('/')
+  if (isTestMode.value) {
+    router.push({ path: '/', query: { test: '1' } })
+  } else {
+    router.push('/')
+  }
 }
 
 async function handleBackHome() {
   await gameStore.leaveRoom(true)
-  router.push('/')
+  if (isTestMode.value) {
+    router.push({ path: '/', query: { test: '1' } })
+  } else {
+    router.push('/')
+  }
 }
 </script>
 

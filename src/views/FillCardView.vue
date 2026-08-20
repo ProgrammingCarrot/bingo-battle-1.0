@@ -28,11 +28,15 @@ onMounted(() => {
   handleRandomFill()
 })
 
-// 監聽房間狀態變更，若雙方皆 Ready 進入 PLAYING，前往對戰畫面
-watch(() => gameStore.roomStatus, (newStatus) => {
-  if (newStatus === 'PLAYING') {
-    router.push(`/game/${roomId.value}`)
-  }
+const isTestMode = computed(() => {
+  return gameStore.isTestMode ||
+         gameStore.isLocalMode || 
+         route.path.includes('/test') || 
+         window.location.hash.includes('/test') || 
+         window.location.hash.includes('test=') ||
+         route.query?.test === 'true' || 
+         route.query?.test === '1' ||
+         route.meta?.isTestMode
 })
 
 const filledCount = computed(() => {
@@ -92,19 +96,18 @@ function handleClearAll() {
   customInputText.value = ''
 }
 
-const isTestMode = computed(() => {
-  return gameStore.isLocalMode || 
-         route.path.includes('/test') || 
-         window.location.hash.includes('/test') || 
-         route.query.test === 'true' || 
-         route.meta?.isTestMode
+// 監聽房間狀態變更，若雙方皆 Ready 進入 PLAYING，前往對戰畫面
+watch(() => gameStore.roomStatus, (newStatus) => {
+  if (newStatus === 'PLAYING') {
+    router.push({ path: `/game/${roomId.value}`, query: route.query })
+  }
 })
 
 async function handleSimulateOpponentReady() {
   playClick()
   playBeep()
   await gameStore.simulateOpponentReadyAndPlay()
-  router.push(`/game/${roomId.value}`)
+  router.push({ path: `/game/${roomId.value}`, query: route.query })
 }
 
 async function handleConfirmReady() {
@@ -119,9 +122,9 @@ async function handleConfirmReady() {
     if (gameStore.roomStatus !== 'PLAYING') {
       await gameStore.simulateOpponentReadyAndPlay()
     }
-    router.push(`/game/${roomId.value}`)
+    router.push({ path: `/game/${roomId.value}`, query: route.query })
   } else if (gameStore.roomStatus === 'PLAYING') {
-    router.push(`/game/${roomId.value}`)
+    router.push({ path: `/game/${roomId.value}`, query: route.query })
   }
 }
 </script>

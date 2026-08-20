@@ -21,6 +21,7 @@ export const useGameStore = defineStore('game', () => {
   const roomId = ref('')
   const isHost = ref(false)
   const isLocalMode = ref(false) // 是否為本機模擬對戰
+  const isTestMode = ref(false)  // 全局測試模式開關
   const roomStatus = ref('IDLE') // IDLE, WAITING, CHOOSING_SIZE, FILLING, PLAYING, FINISHED
   
   const gridSize = ref(5) // 4, 5, 6
@@ -58,31 +59,77 @@ export const useGameStore = defineStore('game', () => {
     const myUid = authStore.user?.uid
     if (player1.value?.uid === myUid) return 'player1'
     if (player2.value?.uid === myUid) return 'player2'
-    return null
+    return 'player1'
   })
 
   const isMyTurnToChooseSize = computed(() => {
+    if (isLocalMode.value) return true
     const myUid = authStore.user?.uid
-    return sizeChooserId.value === myUid || (isLocalMode.value && sizeChooserId.value === 'player1')
+    return sizeChooserId.value === myUid || sizeChooserId.value === player1.value?.uid
   })
 
   const chooserPlayerName = computed(() => {
     if (sizeChooserId.value === player1.value?.uid) return player1.value?.name || '玩家 1'
     if (sizeChooserId.value === player2.value?.uid) return player2.value?.name || '玩家 2'
-    return '某位玩家'
+    return '您'
   })
 
   // 連線即時判定
   const myEvaluation = computed(() => {
+    if (!myBoard.value || myBoard.value.length === 0) {
+      return { lineCount: 0, winningLines: [] }
+    }
     return evaluateBoard(myBoard.value, gridSize.value)
   })
 
+  // 快速啟動本機單人模擬試玩 (AI 對戰)
+  const startQuickSoloTest = async () => {
+    resetRoom()
+    isTestMode.value = true
+    isLocalMode.value = true
+    const code = 'SOLO' + Math.random().toString(36).substring(2, 6).toUpperCase()
+    roomId.value = code
+    isHost.value = true
+
+    const myUid = authStore.user?.uid || 'player_me'
+    player1.value = {
+      uid: myUid,
+      name: authStore.nickname || '探險家 (我)',
+      avatar: authStore.avatarId || 'shiba',
+      ready: false,
+      draftItems: [],
+      marks: [],
+      lineCount: 0,
+      markedCount: 0
+    }
+
+    player2.value = {
+      uid: 'mock_ai_p2',
+      name: '像素小智 (AI)',
+      avatar: 'calico_cat',
+      ready: false,
+      draftItems: [],
+      marks: [],
+      lineCount: 0,
+      markedCount: 0
+    }
+
+    sizeChooserId.value = myUid
+    gridSize.value = 5
+    roomStatus.value = 'CHOOSING_SIZE'
+    return code
+  }
+
   // 1. 建立房間
-  const createRoom = async () => {
+  const createRoom = async (forceLocal = false) => {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase()
     roomId.value = code
     isHost.value = true
-    isLocalMode.value = !isFirebaseConfigured || !db
+    if (forceLocal) {
+      isLocalMode.value = true
+    } else {
+      isLocalMode.value = !isFirebaseConfigured || !db
+    }
 
     // 確保有認證身分 (若尚未登入則自動取得匿名 UID)
     const currentUser = await authStore.ensureAuth()
@@ -132,11 +179,15 @@ export const useGameStore = defineStore('game', () => {
   }
 
   // 2. 加入房間
-  const joinRoom = async (code) => {
+  const joinRoom = async (code, forceLocal = false) => {
     const targetCode = code.trim().toUpperCase()
     roomId.value = targetCode
     isHost.value = false
-    isLocalMode.value = !isFirebaseConfigured || !db
+    if (forceLocal || isLocalMode.value) {
+      isLocalMode.value = true
+    } else {
+      isLocalMode.value = !isFirebaseConfigured || !db
+    }
 
     // 確保有認證身分 (若尚未登入則自動取得匿名 UID)
     const currentUser = await authStore.ensureAuth()
@@ -557,6 +608,7 @@ export const useGameStore = defineStore('game', () => {
     roomId,
     isHost,
     isLocalMode,
+    isTestMode,
     roomStatus,
     gridSize,
     sizeChooserId,
@@ -575,6 +627,7 @@ export const useGameStore = defineStore('game', () => {
     myEvaluation,
     createRoom,
     joinRoom,
+    startQuickSoloTest,
     selectGridSize,
     submitDraftCard,
     toggleMarkCell,

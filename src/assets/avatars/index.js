@@ -101,21 +101,36 @@ export const AVATARS = [
     </svg>`
   },
   {
-    id: 'cyber_bot',
-    name: '像素機器人',
-    color: '#4cc9f0',
+    id: 'linabell',
+    name: '玲娜貝兒',
+    color: '#f4a5ae',
     svg: `<svg viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
       <rect width="16" height="16" fill="#1b1d2a"/>
-      <rect x="7" y="1" width="2" height="2" fill="#4cc9f0"/>
-      <rect x="3" y="3" width="10" height="8" fill="#4a5568"/>
-      <rect x="2" y="6" width="1" height="2" fill="#718096"/>
-      <rect x="13" y="6" width="1" height="2" fill="#718096"/>
-      <rect x="4" y="5" width="8" height="4" fill="#1a202c"/>
-      <rect x="5" y="6" width="2" height="2" fill="#4cc9f0"/>
-      <rect x="9" y="6" width="2" height="2" fill="#4cc9f0"/>
-      <rect x="5" y="9" width="6" height="1" fill="#48bb78"/>
-      <rect x="4" y="12" width="8" height="3" fill="#2d3748"/>
-      <rect x="6" y="13" width="4" height="1" fill="#f6e05e"/>
+      <rect x="2" y="1" width="3" height="4" fill="#f4a5ae"/>
+      <rect x="11" y="1" width="3" height="4" fill="#f4a5ae"/>
+      <rect x="3" y="2" width="2" height="2" fill="#fff0f3"/>
+      <rect x="11" y="2" width="2" height="2" fill="#fff0f3"/>
+      <rect x="2" y="4" width="12" height="8" fill="#f4a5ae"/>
+      <rect x="2" y="3" width="3" height="3" fill="#a267ac"/>
+      <rect x="1" y="4" width="5" height="1" fill="#a267ac"/>
+      <rect x="3" y="2" width="1" height="5" fill="#a267ac"/>
+      <rect x="3" y="4" width="1" height="1" fill="#ffe066"/>
+      <rect x="4" y="6" width="8" height="6" fill="#fff5eb"/>
+      <rect x="3" y="7" width="10" height="4" fill="#fff5eb"/>
+      <rect x="3" y="9" width="2" height="1" fill="#ffb3c1"/>
+      <rect x="11" y="9" width="2" height="1" fill="#ffb3c1"/>
+      <rect x="4" y="7" width="2" height="2" fill="#1d3557"/>
+      <rect x="4" y="8" width="2" height="1" fill="#457b9d"/>
+      <rect x="4" y="7" width="1" height="1" fill="#ffffff"/>
+      <rect x="10" y="7" width="2" height="2" fill="#1d3557"/>
+      <rect x="10" y="8" width="2" height="1" fill="#457b9d"/>
+      <rect x="10" y="7" width="1" height="1" fill="#ffffff"/>
+      <rect x="3" y="6" width="1" height="1" fill="#4a4e69"/>
+      <rect x="12" y="6" width="1" height="1" fill="#4a4e69"/>
+      <rect x="7" y="9" width="2" height="1" fill="#f28482"/>
+      <rect x="7" y="10" width="2" height="1" fill="#c9184a"/>
+      <rect x="4" y="12" width="8" height="3" fill="#f4a5ae"/>
+      <rect x="6" y="12" width="4" height="3" fill="#fff5eb"/>
     </svg>`
   },
   {
@@ -190,36 +205,58 @@ export const AVATARS = [
     </svg>`
   },
   {
-    id: 'wizard',
-    name: '像素法師',
-    color: '#9d4edd',
+    id: 'chestnut',
+    name: '暖心栗子',
+    color: '#ddb892',
     svg: `<svg viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
       <rect width="16" height="16" fill="#1b1d2a"/>
-      <rect x="7" y="0" width="2" height="2" fill="#ffb703"/>
-      <rect x="6" y="2" width="4" height="2" fill="#5a189a"/>
-      <rect x="5" y="4" width="6" height="2" fill="#5a189a"/>
-      <rect x="2" y="6" width="12" height="1" fill="#3c096c"/>
-      <rect x="4" y="7" width="8" height="4" fill="#fde2e4"/>
-      <rect x="5" y="8" width="2" height="2" fill="#ffb703"/>
-      <rect x="9" y="8" width="2" height="2" fill="#ffb703"/>
-      <rect x="3" y="9" width="10" height="4" fill="#f8f9fa"/>
-      <rect x="4" y="13" width="8" height="2" fill="#5a189a"/>
+      <rect x="8" y="0" width="2" height="2" fill="#70e000"/>
+      <rect x="7" y="1" width="1" height="2" fill="#38b000"/>
+      <rect x="7" y="2" width="2" height="2" fill="#6f4e37"/>
+      <rect x="5" y="3" width="6" height="2" fill="#6f4e37"/>
+      <rect x="4" y="4" width="8" height="2" fill="#7f4f24"/>
+      <rect x="3" y="5" width="10" height="4" fill="#8c5835"/>
+      <rect x="5" y="4" width="2" height="1" fill="#b08968"/>
+      <rect x="4" y="5" width="1" height="2" fill="#b08968"/>
+      <rect x="3" y="8" width="10" height="5" fill="#e6ccb2"/>
+      <rect x="4" y="13" width="8" height="2" fill="#ddb892"/>
+      <rect x="5" y="14" width="6" height="1" fill="#b08968"/>
+      <rect x="4" y="7" width="2" height="2" fill="#2b2d42"/>
+      <rect x="4" y="7" width="1" height="1" fill="#ffffff"/>
+      <rect x="10" y="7" width="2" height="2" fill="#2b2d42"/>
+      <rect x="10" y="7" width="1" height="1" fill="#ffffff"/>
+      <rect x="3" y="9" width="2" height="1" fill="#ff8fa3"/>
+      <rect x="11" y="9" width="2" height="1" fill="#ff8fa3"/>
+      <rect x="7" y="10" width="2" height="1" fill="#936639"/>
+      <rect x="7" y="11" width="2" height="1" fill="#e63946"/>
     </svg>`
   },
   {
-    id: 'ninja',
-    name: '影之忍者',
-    color: '#06d6a0',
+    id: 'radish',
+    name: '水嫩蘿蔔',
+    color: '#ff5d8f',
     svg: `<svg viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges">
       <rect width="16" height="16" fill="#1b1d2a"/>
-      <rect x="4" y="2" width="8" height="3" fill="#1d3557"/>
-      <rect x="3" y="4" width="10" height="2" fill="#e63946"/>
-      <rect x="4" y="6" width="8" height="2" fill="#fcd5ce"/>
-      <rect x="5" y="6" width="2" height="2" fill="#06d6a0"/>
-      <rect x="9" y="6" width="2" height="2" fill="#06d6a0"/>
-      <rect x="3" y="8" width="10" height="4" fill="#1d3557"/>
-      <rect x="3" y="12" width="10" height="3" fill="#0f172a"/>
-      <rect x="6" y="12" width="4" height="2" fill="#e63946"/>
+      <rect x="5" y="1" width="2" height="3" fill="#2d6a4f"/>
+      <rect x="9" y="1" width="2" height="3" fill="#2d6a4f"/>
+      <rect x="4" y="0" width="2" height="2" fill="#52b788"/>
+      <rect x="10" y="0" width="2" height="2" fill="#52b788"/>
+      <rect x="7" y="0" width="2" height="4" fill="#74c69d"/>
+      <rect x="6" y="3" width="4" height="2" fill="#40916c"/>
+      <rect x="4" y="4" width="8" height="2" fill="#ff5d8f"/>
+      <rect x="3" y="6" width="10" height="5" fill="#ff758f"/>
+      <rect x="4" y="10" width="8" height="3" fill="#ffffff"/>
+      <rect x="5" y="12" width="6" height="2" fill="#f8f9fa"/>
+      <rect x="7" y="14" width="2" height="2" fill="#e9ecef"/>
+      <rect x="4" y="6" width="1" height="2" fill="#ffccd5"/>
+      <rect x="5" y="7" width="2" height="2" fill="#1b263b"/>
+      <rect x="5" y="7" width="1" height="1" fill="#ffffff"/>
+      <rect x="9" y="7" width="2" height="2" fill="#1b263b"/>
+      <rect x="9" y="7" width="1" height="1" fill="#ffffff"/>
+      <rect x="3" y="9" width="2" height="1" fill="#ff477e"/>
+      <rect x="11" y="9" width="2" height="1" fill="#ff477e"/>
+      <rect x="7" y="9" width="2" height="1" fill="#c9184a"/>
+      <rect x="7" y="10" width="2" height="1" fill="#ff4d6d"/>
     </svg>`
   }
 ]

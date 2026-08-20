@@ -103,13 +103,6 @@ watch(() => gameStore.roomStatus, (newStatus) => {
   }
 })
 
-async function handleSimulateOpponentReady() {
-  playClick()
-  playBeep()
-  await gameStore.simulateOpponentReadyAndPlay()
-  router.push({ path: `/game/${roomId.value}`, query: route.query })
-}
-
 async function handleConfirmReady() {
   if (!isAllFilled.value) return
   playClick()
@@ -236,16 +229,6 @@ async function handleConfirmReady() {
 
     <!-- Bottom Submit Bar -->
     <div class="bottom-action-bar">
-      <!-- Test Mode Quick Helper -->
-      <div v-if="isTestMode" class="test-fill-bar">
-        <button 
-          class="pixel-btn pixel-btn-secondary test-skip-btn" 
-          @click="handleSimulateOpponentReady"
-        >
-          🧪 測試模式：模擬對手填卡完成並立即開戰
-        </button>
-      </div>
-
       <button 
         class="pixel-btn pixel-btn-gold ready-submit-btn" 
         :disabled="!isAllFilled || isReady"
@@ -485,17 +468,6 @@ async function handleConfirmReady() {
 
 .bottom-action-bar {
   text-align: center;
-}
-
-.test-fill-bar {
-  margin-bottom: 10px;
-}
-
-.test-skip-btn {
-  font-size: 12px;
-  width: 100%;
-  color: #e0aaff;
-  border-color: #7b2cbf;
 }
 
 .ready-submit-btn {
